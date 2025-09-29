@@ -1,103 +1,318 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plataforma de Seguimiento - Daule</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        /* Estilo para hacer el texto de la marca más visible */
-        .navbar-brand-custom {
-            font-size: 1.4rem;
-            font-weight: bold;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plataforma de Seguimiento - Daule</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .navbar-brand-custom {
+      font-size: 1.4rem;
+      font-weight: bold;
+    }
+    /* Estilo para el panel de edición lateral */
+    #editSidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      width: 260px;
+      padding-top: 60px; /* espacio para navbar */
+      transition: transform 0.3s ease;
+      z-index: 1040;
+      border-right: 1px solid #ccc;
+      overflow-y: auto;
+    }
+    .navbar {
+      z-index: 1050;
+    }
+    /* Estilo para simular el modo de edición */
+    .editable {
+      border: 1px dashed #ffc107;
+      padding: 5px;
+      cursor: text;
+    }
+    /* Clase para ocultar temporalmente la barra lateral */
+    .d-none-temp {
+      display: none !important;
+    }
+  </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
-        <div class="container-fluid">
-            <a class="navbar-brand text-success navbar-brand-custom" href="#">
-                <i class="fas fa-chart-line me-2"></i>
-                Indicadores Daule
-            </a>
-            
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item"><a class="nav-link active" aria-current="page" href="#">Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Metas</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Indicadores</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Avances</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Reportes</a></li>
-                </ul>
+  <!-- PANEL DE EDICIÓN -->
+  <div id="editSidebar" class="bg-white d-none-temp p-3 shadow-lg">
+    <h5 class="text-success mb-3"><i class="fas fa-tools"></i> Herramientas</h5>
 
-                <ul class="navbar-nav">
-                    <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-bell"></i></a></li>
-                    
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-user-circle me-1"></i> Usuarios
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i> Gestión de Usuarios</a></li>
-                            <li><a class="dropdown-item" href="#"><i class="fas fa-address-card me-2"></i> Mi Perfil</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item text-danger" href="#"><i class="fas fa-sign-out-alt me-2"></i> Cerrar sesión</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <div>
+      <!-- Texto -->
+      <h6 class="fw-bold">Formato de Texto</h6>
+      <div class="btn-group w-100 mb-3" role="group">
+        <button class="btn btn-sm btn-outline-dark" onclick="formatText('bold')" title="Negrita">
+          <i class="fas fa-bold"></i>
+        </button>
+        <button class="btn btn-sm btn-outline-dark" onclick="formatText('italic')" title="Cursiva">
+          <i class="fas fa-italic"></i>
+        </button>
+        <button class="btn btn-sm btn-outline-dark" onclick="formatText('underline')" title="Subrayado">
+          <i class="fas fa-underline"></i>
+        </button>
+        <button class="btn btn-sm btn-outline-primary" onclick="addLink()" title="Añadir enlace">
+          <i class="fas fa-link"></i>
+        </button>
+      </div>
 
-    <div class="container mt-4">
-        <h2>Panel de Indicadores</h2>
-        <p>Bienvenido, seleccione una opción del menú para gestionar metas, indicadores, avances o reportes.</p>
+      <!-- Estilos -->
+      <h6 class="fw-bold">Estilos del Elemento</h6>
 
-        <div class="row">
-            <div class="col-md-3">
-                <div class="card text-white bg-primary mb-3">
-                    <div class="card-body">
-                        <h5 class="card-title">Metas</h5>
-                        <p class="card-text">Gestionar metas del proyecto.</p>
-                    </div>
-                </div>
-            </div>
+      <label class="form-label small fw-bold">Color de Texto</label>
+      <input type="color" class="form-control form-control-sm mb-3" id="textColorPicker" value="#000000" 
+            oninput="changeStyle('color', this.value)">
 
-            <div class="col-md-3">
-                <div class="card text-white bg-info mb-3">
-                    <div class="card-body">
-                        <h5 class="card-title">Indicadores</h5>
-                        <p class="card-text">Visualizar y editar indicadores.</p>
-                    </div>
-                </div>
-            </div>
+      <label class="form-label small fw-bold">Tamaño de Fuente</label>
+      <div class="input-group input-group-sm mb-3">
+        <input type="number" class="form-control" id="fontSizeInput" min="8" max="72" 
+              oninput="changeStyle('fontSize', this.value + 'px')">
+        <span class="input-group-text">px</span>
+      </div>
 
-            <div class="col-md-3">
-                <div class="card text-white bg-warning mb-3">
-                    <div class="card-body">
-                        <h5 class="card-title">Avances</h5>
-                        <p class="card-text">Registrar progreso por indicador.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-3">
-                <div class="card text-white bg-success mb-3">
-                    <div class="card-body">
-                        <h5 class="card-title">Reportes</h5>
-                        <p class="card-text">Generar reportes automáticos.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+      <label class="form-label small fw-bold">Tipo de Letra</label>
+      <select class="form-select form-select-sm mb-3" id="fontFamilySelect" onchange="changeStyle('fontFamily', this.value)">
+        <option value="Arial" style="font-family: Arial;">Arial</option>
+        <option value="Times New Roman" style="font-family: 'Times New Roman';">Times New Roman</option>
+        <option value="Courier New" style="font-family: 'Courier New';">Courier New</option>
+        <option value="Verdana" style="font-family: Verdana;">Verdana</option>
+        <option value="Georgia" style="font-family: Georgia;">Georgia</option>
+      </select>
     </div>
+  </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <div class="container-fluid">
+      <a class="navbar-brand text-success navbar-brand-custom" href="#">
+        <i class="fas fa-chart-line me-2"></i>
+        Indicadores Daule
+      </a>
+      
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav mx-auto">
+          <li class="nav-item"><a class="nav-link active" aria-current="page" href="#">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Metas</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Indicadores</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Avances</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Reportes</a></li>
+        </ul>
+
+        <ul class="navbar-nav" id="loginBtnContainer">
+          <li class="nav-item">
+            <button class="btn btn-outline-success" type="button" data-bs-toggle="modal" data-bs-target="#loginModal">
+              <i class="fas fa-sign-in-alt me-2"></i> Iniciar Sesión
+            </button>
+          </li>
+        </ul>
+
+        <ul class="navbar-nav d-none" id="userNav">
+          <li class="nav-item">
+            <button id="editToggleBtn" class="btn btn-warning me-2" onclick="toggleEditMode()">
+              <i class="fas fa-edit me-1"></i> Modo Edición
+            </button>
+          </li>
+          <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-bell"></i></a></li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownUser" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="fas fa-user-circle me-1"></i> <span id="userNameDisplay">Usuario</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownUser">
+              <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i> Gestión de Usuarios</a></li>
+              <li><a class="dropdown-item" href="#"><i class="fas fa-address-card me-2"></i> Mi Perfil</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item text-danger" href="#" onclick="handleLogout()"><i class="fas fa-sign-out-alt me-2"></i> Cerrar sesión</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- CONTENIDO -->
+  <div id="mainContentWrapper" class="container-fluid">
+    <div class="container mt-4">
+      <h2 id="main-title" class="editable-text">Panel de Indicadores</h2>
+      <p id="main-welcome" class="editable-text">Bienvenido, haga clic en "Iniciar Sesión" para acceder.</p>
+
+      <div class="row">
+        <div class="col-md-3">
+          <div class="card text-white bg-primary mb-3">
+            <div class="card-body">
+              <h5 class="card-title editable-text text-white">Metas</h5>
+              <p class="card-text editable-text text-white">Gestionar metas del proyecto.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="card text-white bg-info mb-3">
+            <div class="card-body">
+              <h5 class="card-title editable-text text-white">Indicadores</h5>
+              <p class="card-text editable-text text-white">Visualizar y editar indicadores.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="card text-white bg-warning mb-3">
+            <div class="card-body">
+              <h5 class="card-title editable-text text-white">Avances</h5>
+              <p class="card-text editable-text text-white">Registrar progreso por indicador.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="card text-white bg-success mb-3">
+            <div class="card-body">
+              <h5 class="card-title editable-text text-white">Reportes</h5>
+              <p class="card-text editable-text text-white">Generar reportes automáticos.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL LOGIN -->
+  <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-success text-white">
+          <h5 class="modal-title" id="loginModalLabel"><i class="fas fa-lock me-2"></i> Acceso al Sistema</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="loginForm">
+            <div class="mb-3">
+              <label for="inputEmail" class="form-label">Correo Electrónico</label>
+              <input type="email" class="form-control" id="inputEmail" value="a@ug.com" required>
+            </div>
+            <div class="mb-3">
+              <label for="inputPassword" class="form-label">Contraseña</label>
+              <input type="password" class="form-control" id="inputPassword" value="1234" required>
+            </div>
+            <div class="d-grid">
+              <button type="button" class="btn btn-success mt-3" onclick="handleLogin()">Ingresar</button>
+            </div>
+          </form>
+          <hr>
+          <p class="text-center text-muted small">¿Olvidaste tu contraseña? <a href="#">Recuperar</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <script>
+    let isEditMode = false;
+
+    // ===== Funciones del panel =====
+    function formatText(command) {
+      document.execCommand(command, false, null);
+    }
+
+    function addLink() {
+      const url = prompt("Introduce la URL:", "http://");
+      if (url && url !== "http://") {
+        document.execCommand("createLink", false, url);
+      }
+    }
+
+    function changeStyle(property, value) {
+      if (property === "fontSize") {
+        // Aplica un tamaño temporal
+        document.execCommand("fontSize", false, "7");
+
+        // Cambia el <font size="7"> al tamaño exacto en px
+        const fonts = document.getElementsByTagName("font");
+        for (let i = 0; i < fonts.length; i++) {
+          if (fonts[i].size == "7") {
+            fonts[i].removeAttribute("size");
+            fonts[i].style.fontSize = value;
+          }
+        }
+      } else if (property === "color") {
+        document.execCommand("foreColor", false, value);
+      } else if (property === "fontFamily") {
+        document.execCommand("fontName", false, value);
+      }
+    }
+
+    // ===== Modo edición =====
+    function toggleEditMode() {
+      isEditMode = !isEditMode;
+      const editElements = document.querySelectorAll(".editable-text");
+      const editButton = document.getElementById("editToggleBtn");
+      const sidebar = document.getElementById("editSidebar");
+      const mainContentWrapper = document.getElementById("mainContentWrapper");
+
+      if (isEditMode) {
+        editButton.classList.remove("btn-warning");
+        editButton.classList.add("btn-success");
+        editButton.innerHTML = '<i class="fas fa-save me-1"></i> Guardar Cambios';
+
+        editElements.forEach(el => {
+          el.setAttribute("contenteditable", "true");
+          el.classList.add("editable");
+        });
+
+        sidebar.classList.remove("d-none-temp");
+        mainContentWrapper.style.marginLeft = "260px";
+        mainContentWrapper.style.width = "calc(100% - 260px)";
+      } else {
+        editButton.classList.remove("btn-success");
+        editButton.classList.add("btn-warning");
+        editButton.innerHTML = '<i class="fas fa-edit me-1"></i> Modo Edición';
+
+        editElements.forEach(el => {
+          el.removeAttribute("contenteditable");
+          el.classList.remove("editable");
+        });
+
+        sidebar.classList.add("d-none-temp");
+        mainContentWrapper.style.marginLeft = "0";
+        mainContentWrapper.style.width = "100%";
+      }
+    }
+
+    // ===== Login / Logout =====
+    function handleLogin() {
+      const emailInput = document.getElementById("inputEmail").value;
+      const passwordInput = document.getElementById("inputPassword").value;
+      const TEST_EMAIL = "a@ug.com";
+      const TEST_PASSWORD = "1234";
+      const USER_NAME = "Administrador Daule";
+
+      if (emailInput === TEST_EMAIL && passwordInput === TEST_PASSWORD) {
+        const loginModal = bootstrap.Modal.getInstance(document.getElementById("loginModal"));
+        if (loginModal) {
+          loginModal.hide();
+        }
+
+        document.getElementById("loginBtnContainer").classList.add("d-none");
+        document.getElementById("userNav").classList.remove("d-none");
+        document.getElementById("userNameDisplay").textContent = USER_NAME;
+        document.getElementById("main-welcome").textContent = "Bienvenido, " + USER_NAME + ". Presiona el botón 'Modo Edición' para acceder al panel lateral.";
+      }
+    }
+
+    function handleLogout() {
+      if (isEditMode) {
+        toggleEditMode();
+      }
+      document.getElementById("userNav").classList.add("d-none");
+      document.getElementById("loginBtnContainer").classList.remove("d-none");
+      document.getElementById("main-welcome").textContent = 'Bienvenido, haga clic en "Iniciar Sesión" para acceder.';
+    }
+  </script>
 </body>
 </html>
