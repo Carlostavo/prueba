@@ -1,109 +1,120 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Plataforma de Seguimiento - Daule</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    .navbar-brand-custom {
-      font-size: 1.4rem;
-      font-weight: bold;
-    }
-    /* Estilo para el panel de edición lateral */
+    .navbar-brand-custom { font-size: 1.4rem; font-weight: bold; }
     #editSidebar {
       position: fixed;
       top: 0;
       left: 0;
       height: 100vh;
       width: 260px;
-      padding-top: 60px; /* espacio para navbar */
-      transition: transform 0.3s ease;
+      padding-top: 60px;
       z-index: 1040;
       border-right: 1px solid #ccc;
       overflow-y: auto;
+      background: #fff;
     }
-    .navbar {
-      z-index: 1050;
-    }
-    /* Estilo para simular el modo de edición */
-    .editable {
-      border: 1px dashed #ffc107;
-      padding: 5px;
-      cursor: text;
-    }
-    /* Clase para ocultar temporalmente la barra lateral */
-    .d-none-temp {
-      display: none !important;
-    }
+    .navbar { z-index: 1050; }
+    .editable { border: 1px dashed #ffc107; padding: 5px; cursor: text; }
+    .d-none-temp { display: none !important; }
+    #mainContentWrapper { transition: margin-left .2s ease; }
+    .active-editable { outline: 2px dashed red; }
   </style>
 </head>
 <body>
   <!-- PANEL DE EDICIÓN -->
-  <div id="editSidebar" class="bg-white d-none-temp p-3 shadow-lg">
+  <div id="editSidebar" class="bg-white d-none-temp p-3 shadow-lg" aria-hidden="true">
     <h5 class="text-success mb-3"><i class="fas fa-tools"></i> Herramientas</h5>
 
-    <div>
-      <!-- Texto -->
-      <h6 class="fw-bold">Formato de Texto</h6>
-      <div class="btn-group w-100 mb-3" role="group">
-        <button class="btn btn-sm btn-outline-dark" onclick="formatText('bold')" title="Negrita">
-          <i class="fas fa-bold"></i>
-        </button>
-        <button class="btn btn-sm btn-outline-dark" onclick="formatText('italic')" title="Cursiva">
-          <i class="fas fa-italic"></i>
-        </button>
-        <button class="btn btn-sm btn-outline-dark" onclick="formatText('underline')" title="Subrayado">
-          <i class="fas fa-underline"></i>
-        </button>
-        <button class="btn btn-sm btn-outline-primary" onclick="addLink()" title="Añadir enlace">
-          <i class="fas fa-link"></i>
-        </button>
-      </div>
-
-      <!-- Estilos -->
-      <h6 class="fw-bold">Estilos del Elemento</h6>
-
-      <label class="form-label small fw-bold">Color de Texto</label>
-      <input type="color" class="form-control form-control-sm mb-3" id="textColorPicker" value="#000000" 
-            oninput="changeStyle('color', this.value)">
-
-      <label class="form-label small fw-bold">Tamaño de Fuente</label>
-      <div class="input-group input-group-sm mb-3">
-        <input type="number" class="form-control" id="fontSizeInput" min="8" max="72" 
-              oninput="changeStyle('fontSize', this.value + 'px')">
-        <span class="input-group-text">px</span>
-      </div>
-
-      <label class="form-label small fw-bold">Tipo de Letra</label>
-      <select class="form-select form-select-sm mb-3" id="fontFamilySelect" onchange="changeStyle('fontFamily', this.value)">
-        <option value="Arial" style="font-family: Arial;">Arial</option>
-        <option value="Times New Roman" style="font-family: 'Times New Roman';">Times New Roman</option>
-        <option value="Courier New" style="font-family: 'Courier New';">Courier New</option>
-        <option value="Verdana" style="font-family: Verdana;">Verdana</option>
-        <option value="Georgia" style="font-family: Georgia;">Georgia</option>
-      </select>
+    <!-- Formato -->
+    <h6 class="fw-bold">Formato de Texto</h6>
+    <div class="btn-group w-100 mb-3" role="group">
+      <button class="btn btn-sm btn-outline-dark" onclick="formatText('bold')" title="Negrita"><i class="fas fa-bold"></i></button>
+      <button class="btn btn-sm btn-outline-dark" onclick="formatText('italic')" title="Cursiva"><i class="fas fa-italic"></i></button>
+      <button class="btn btn-sm btn-outline-dark" onclick="formatText('underline')" title="Subrayado"><i class="fas fa-underline"></i></button>
+      <button class="btn btn-sm btn-outline-primary" onclick="addLink()" title="Añadir enlace"><i class="fas fa-link"></i></button>
     </div>
+
+    <!-- Listas -->
+    <h6 class="fw-bold">Listas</h6>
+    <div class="btn-group w-100 mb-3" role="group">
+      <button class="btn btn-sm btn-outline-secondary" onclick="formatText('insertUnorderedList')" title="Viñetas"><i class="fas fa-list-ul"></i></button>
+      <button class="btn btn-sm btn-outline-secondary" onclick="formatText('insertOrderedList')" title="Numeración"><i class="fas fa-list-ol"></i></button>
+    </div>
+
+    <!-- Estilos -->
+    <h6 class="fw-bold">Estilos</h6>
+    <label class="form-label small fw-bold">Color de Texto</label>
+    <input type="color" class="form-control form-control-sm mb-3"
+           onchange="changeStyle('color', this.value)">
+
+    <label class="form-label small fw-bold">Fondo</label>
+    <input type="color" class="form-control form-control-sm mb-3"
+           onchange="changeStyle('hiliteColor', this.value)">
+
+    <label class="form-label small fw-bold">Tamaño de Fuente</label>
+    <div class="input-group input-group-sm mb-3">
+      <input type="number" id="fontSizeInput" class="form-control" min="8" max="128" placeholder="Ej: 16"
+             oninput="changeStyle('fontSize', this.value + 'px')">
+      <span class="input-group-text">px</span>
+    </div>
+
+    <label class="form-label small fw-bold">Tipo de Letra</label>
+    <select class="form-select form-select-sm mb-3" onchange="changeStyle('fontFamily', this.value)">
+      <option value="Arial" style="font-family:Arial">Arial</option>
+      <option value="Helvetica" style="font-family:Helvetica">Helvetica</option>
+      <option value="Times New Roman" style="font-family:'Times New Roman'">Times New Roman</option>
+      <option value="Courier New" style="font-family:'Courier New'">Courier New</option>
+      <option value="Verdana" style="font-family:Verdana">Verdana</option>
+      <option value="Georgia" style="font-family:Georgia">Georgia</option>
+    </select>
+
+    <!-- Alineación -->
+    <h6 class="fw-bold">Alineación</h6>
+    <div class="btn-group w-100 mb-3" role="group">
+      <button class="btn btn-sm btn-outline-secondary" onclick="formatText('justifyLeft')"><i class="fas fa-align-left"></i></button>
+      <button class="btn btn-sm btn-outline-secondary" onclick="formatText('justifyCenter')"><i class="fas fa-align-center"></i></button>
+      <button class="btn btn-sm btn-outline-secondary" onclick="formatText('justifyRight')"><i class="fas fa-align-right"></i></button>
+      <button class="btn btn-sm btn-outline-secondary" onclick="formatText('justifyFull')"><i class="fas fa-align-justify"></i></button>
+    </div>
+
+    <!-- Historial -->
+    <h6 class="fw-bold">Historial</h6>
+    <div class="btn-group w-100 mb-3" role="group">
+      <button class="btn btn-sm btn-outline-secondary" onclick="formatText('undo')" title="Deshacer"><i class="fas fa-undo"></i></button>
+      <button class="btn btn-sm btn-outline-secondary" onclick="formatText('redo')" title="Rehacer"><i class="fas fa-redo"></i></button>
+    </div>
+
+    <!-- Elementos -->
+    <h6 class="fw-bold">Elementos</h6>
+    <button class="btn btn-sm btn-outline-success w-100 mb-2" onclick="addTextBox()">
+      <i class="fas fa-square-plus me-1"></i> Agregar Cuadro de Texto
+    </button>
+    <button class="btn btn-sm btn-outline-danger w-100" onclick="deleteSelectedElement()">
+      <i class="fas fa-trash me-1"></i> Eliminar Elemento
+    </button>
   </div>
 
   <!-- NAVBAR -->
   <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
     <div class="container-fluid">
       <a class="navbar-brand text-success navbar-brand-custom" href="#">
-        <i class="fas fa-chart-line me-2"></i>
-        Indicadores Daule
+        <i class="fas fa-chart-line me-2"></i> Indicadores Daule
       </a>
-      
-      <div class="collapse navbar-collapse" id="navbarNav">
+      <div class="collapse navbar-collapse">
         <ul class="navbar-nav mx-auto">
-          <li class="nav-item"><a class="nav-link active" aria-current="page" href="#">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link active" href="#">Inicio</a></li>
           <li class="nav-item"><a class="nav-link" href="#">Metas</a></li>
           <li class="nav-item"><a class="nav-link" href="#">Indicadores</a></li>
           <li class="nav-item"><a class="nav-link" href="#">Avances</a></li>
           <li class="nav-item"><a class="nav-link" href="#">Reportes</a></li>
         </ul>
-
         <ul class="navbar-nav" id="loginBtnContainer">
           <li class="nav-item">
             <button class="btn btn-outline-success" type="button" data-bs-toggle="modal" data-bs-target="#loginModal">
@@ -111,7 +122,6 @@
             </button>
           </li>
         </ul>
-
         <ul class="navbar-nav d-none" id="userNav">
           <li class="nav-item">
             <button id="editToggleBtn" class="btn btn-warning me-2" onclick="toggleEditMode()">
@@ -120,10 +130,10 @@
           </li>
           <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-bell"></i></a></li>
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownUser" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
               <i class="fas fa-user-circle me-1"></i> <span id="userNameDisplay">Usuario</span>
             </a>
-            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownUser">
+            <ul class="dropdown-menu dropdown-menu-end">
               <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i> Gestión de Usuarios</a></li>
               <li><a class="dropdown-item" href="#"><i class="fas fa-address-card me-2"></i> Mi Perfil</a></li>
               <li><hr class="dropdown-divider"></li>
@@ -136,41 +146,38 @@
   </nav>
 
   <!-- CONTENIDO -->
-  <div id="mainContentWrapper" class="container-fluid">
-    <div class="container mt-4">
+  <div id="mainContentWrapper" class="container-fluid" style="margin-left:0;">
+    <div class="container mt-4" id="mainContent">
       <h2 id="main-title" class="editable-text">Panel de Indicadores</h2>
       <p id="main-welcome" class="editable-text">Bienvenido, haga clic en "Iniciar Sesión" para acceder.</p>
 
       <div class="row">
         <div class="col-md-3">
-          <div class="card text-white bg-primary mb-3">
+          <div class="card text-white bg-primary mb-3 editable-text">
             <div class="card-body">
               <h5 class="card-title editable-text text-white">Metas</h5>
               <p class="card-text editable-text text-white">Gestionar metas del proyecto.</p>
             </div>
           </div>
         </div>
-
         <div class="col-md-3">
-          <div class="card text-white bg-info mb-3">
+          <div class="card text-white bg-info mb-3 editable-text">
             <div class="card-body">
               <h5 class="card-title editable-text text-white">Indicadores</h5>
               <p class="card-text editable-text text-white">Visualizar y editar indicadores.</p>
             </div>
           </div>
         </div>
-
         <div class="col-md-3">
-          <div class="card text-white bg-warning mb-3">
+          <div class="card text-white bg-warning mb-3 editable-text">
             <div class="card-body">
               <h5 class="card-title editable-text text-white">Avances</h5>
               <p class="card-text editable-text text-white">Registrar progreso por indicador.</p>
             </div>
           </div>
         </div>
-
         <div class="col-md-3">
-          <div class="card text-white bg-success mb-3">
+          <div class="card text-white bg-success mb-3 editable-text">
             <div class="card-body">
               <h5 class="card-title editable-text text-white">Reportes</h5>
               <p class="card-text editable-text text-white">Generar reportes automáticos.</p>
@@ -182,12 +189,12 @@
   </div>
 
   <!-- MODAL LOGIN -->
-  <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+  <div class="modal fade" id="loginModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header bg-success text-white">
-          <h5 class="modal-title" id="loginModalLabel"><i class="fas fa-lock me-2"></i> Acceso al Sistema</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          <h5 class="modal-title"><i class="fas fa-lock me-2"></i> Acceso al Sistema</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
           <form id="loginForm">
@@ -203,115 +210,131 @@
               <button type="button" class="btn btn-success mt-3" onclick="handleLogin()">Ingresar</button>
             </div>
           </form>
-          <hr>
-          <p class="text-center text-muted small">¿Olvidaste tu contraseña? <a href="#">Recuperar</a></p>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- SCRIPTS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  
   <script>
     let isEditMode = false;
+    let savedRange = null;
+    let activeEditable = null;
 
-    // ===== Funciones del panel =====
-    function formatText(command) {
-      document.execCommand(command, false, null);
+    function saveSelection() {
+      const sel = window.getSelection();
+      if (!sel || sel.rangeCount === 0) return;
+      savedRange = sel.getRangeAt(0).cloneRange();
     }
+    function restoreSelection() {
+      if (!savedRange) return;
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(savedRange);
+    }
+    document.addEventListener('mouseup', saveSelection);
+    document.addEventListener('keyup', saveSelection);
 
-    function addLink() {
-      const url = prompt("Introduce la URL:", "http://");
-      if (url && url !== "http://") {
-        document.execCommand("createLink", false, url);
+    // Detectar elemento activo
+    document.addEventListener('click', function(e) {
+      if (!isEditMode) return;
+      const el = e.target.closest('.editable-text');
+      if (el) {
+        e.stopPropagation();
+        if (activeEditable) activeEditable.classList.remove('active-editable');
+        activeEditable = el;
+        activeEditable.classList.add('active-editable');
       }
+    });
+
+    function formatText(command) {
+      restoreSelection();
+      document.execCommand(command, false, null);
+      saveSelection();
     }
-
+    function addLink() {
+      restoreSelection();
+      const url = prompt("Introduce la URL:", "http://");
+      if (url && url !== "http://") document.execCommand("createLink", false, url);
+      saveSelection();
+    }
     function changeStyle(property, value) {
-      if (property === "fontSize") {
-        // Aplica un tamaño temporal
-        document.execCommand("fontSize", false, "7");
-
-        // Cambia el <font size="7"> al tamaño exacto en px
-        const fonts = document.getElementsByTagName("font");
+      restoreSelection();
+      if (property === 'fontSize') {
+        document.execCommand('fontSize', false, '7');
+        const fonts = document.getElementsByTagName('font');
         for (let i = 0; i < fonts.length; i++) {
-          if (fonts[i].size == "7") {
-            fonts[i].removeAttribute("size");
+          if (fonts[i].size == '7') {
+            fonts[i].removeAttribute('size');
             fonts[i].style.fontSize = value;
           }
         }
-      } else if (property === "color") {
-        document.execCommand("foreColor", false, value);
-      } else if (property === "fontFamily") {
-        document.execCommand("fontName", false, value);
+      } else if (property === 'color') {
+        document.execCommand('foreColor', false, value);
+      } else if (property === 'hiliteColor') {
+        document.execCommand('hiliteColor', false, value);
+      } else if (property === 'fontFamily') {
+        document.execCommand('fontName', false, value);
+      }
+      saveSelection();
+    }
+    function addTextBox() {
+      const container = document.getElementById("mainContent");
+      const newBox = document.createElement("div");
+      newBox.className = "editable-text border p-2 mt-2";
+      newBox.setAttribute("contenteditable", "true");
+      newBox.textContent = "Nuevo cuadro de texto...";
+      container.appendChild(newBox);
+    }
+    function deleteSelectedElement() {
+      if (activeEditable) {
+        if (confirm("¿Desea eliminar este elemento?")) {
+          activeEditable.remove();
+          activeEditable = null;
+        }
+      } else {
+        alert("Seleccione primero un elemento para eliminar.");
       }
     }
-
-    // ===== Modo edición =====
     function toggleEditMode() {
       isEditMode = !isEditMode;
-      const editElements = document.querySelectorAll(".editable-text");
-      const editButton = document.getElementById("editToggleBtn");
-      const sidebar = document.getElementById("editSidebar");
-      const mainContentWrapper = document.getElementById("mainContentWrapper");
-
+      const editElements = document.querySelectorAll('.editable-text');
+      const editButton = document.getElementById('editToggleBtn');
+      const sidebar = document.getElementById('editSidebar');
+      const mainContentWrapper = document.getElementById('mainContentWrapper');
       if (isEditMode) {
-        editButton.classList.remove("btn-warning");
-        editButton.classList.add("btn-success");
+        editButton.classList.replace('btn-warning', 'btn-success');
         editButton.innerHTML = '<i class="fas fa-save me-1"></i> Guardar Cambios';
-
-        editElements.forEach(el => {
-          el.setAttribute("contenteditable", "true");
-          el.classList.add("editable");
-        });
-
-        sidebar.classList.remove("d-none-temp");
-        mainContentWrapper.style.marginLeft = "260px";
-        mainContentWrapper.style.width = "calc(100% - 260px)";
+        editElements.forEach(el => el.setAttribute('contenteditable', 'true'));
+        sidebar.classList.remove('d-none-temp');
+        mainContentWrapper.style.marginLeft = '260px';
       } else {
-        editButton.classList.remove("btn-success");
-        editButton.classList.add("btn-warning");
+        editButton.classList.replace('btn-success', 'btn-warning');
         editButton.innerHTML = '<i class="fas fa-edit me-1"></i> Modo Edición';
-
-        editElements.forEach(el => {
-          el.removeAttribute("contenteditable");
-          el.classList.remove("editable");
-        });
-
-        sidebar.classList.add("d-none-temp");
-        mainContentWrapper.style.marginLeft = "0";
-        mainContentWrapper.style.width = "100%";
+        editElements.forEach(el => el.removeAttribute('contenteditable'));
+        sidebar.classList.add('d-none-temp');
+        mainContentWrapper.style.marginLeft = '0';
+        if (activeEditable) activeEditable.classList.remove('active-editable');
+        activeEditable = null;
       }
     }
-
-    // ===== Login / Logout =====
     function handleLogin() {
-      const emailInput = document.getElementById("inputEmail").value;
-      const passwordInput = document.getElementById("inputPassword").value;
-      const TEST_EMAIL = "a@ug.com";
-      const TEST_PASSWORD = "1234";
-      const USER_NAME = "Administrador Daule";
-
-      if (emailInput === TEST_EMAIL && passwordInput === TEST_PASSWORD) {
-        const loginModal = bootstrap.Modal.getInstance(document.getElementById("loginModal"));
-        if (loginModal) {
-          loginModal.hide();
-        }
-
-        document.getElementById("loginBtnContainer").classList.add("d-none");
-        document.getElementById("userNav").classList.remove("d-none");
-        document.getElementById("userNameDisplay").textContent = USER_NAME;
-        document.getElementById("main-welcome").textContent = "Bienvenido, " + USER_NAME + ". Presiona el botón 'Modo Edición' para acceder al panel lateral.";
+      const emailInput = document.getElementById('inputEmail').value;
+      const passwordInput = document.getElementById('inputPassword').value;
+      if (emailInput === 'a@ug.com' && passwordInput === '1234') {
+        bootstrap.Modal.getInstance(document.getElementById('loginModal')).hide();
+        document.getElementById('loginBtnContainer').classList.add('d-none');
+        document.getElementById('userNav').classList.remove('d-none');
+        document.getElementById('userNameDisplay').textContent = 'Administrador Daule';
+        document.getElementById('main-welcome').textContent = "Bienvenido, Administrador Daule. Presiona 'Modo Edición' para activar el panel.";
       }
     }
-
     function handleLogout() {
-      if (isEditMode) {
-        toggleEditMode();
-      }
-      document.getElementById("userNav").classList.add("d-none");
-      document.getElementById("loginBtnContainer").classList.remove("d-none");
-      document.getElementById("main-welcome").textContent = 'Bienvenido, haga clic en "Iniciar Sesión" para acceder.';
+      if (isEditMode) toggleEditMode();
+      document.getElementById('userNav').classList.add('d-none');
+      document.getElementById('loginBtnContainer').classList.remove('d-none');
+      document.getElementById('main-welcome').textContent = 'Bienvenido, haga clic en "Iniciar Sesión" para acceder.';
     }
   </script>
 </body>
